@@ -6,6 +6,7 @@ import helper.Observer;
 import helper.Pair;
 import model.Player;
 
+import javax.swing.*;
 import java.util.*;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -17,10 +18,10 @@ public class GameManager implements Observable {
 	private int currentPlayerIndex = 0;
 	private List<Observer> observers;
 
-	private enum Status {notSelected, clicked, afterClicked}
+	private enum Status {notSelected, clicked}
 	private Status status;
 	private Pair selectedCell;
-	private int turnCount;
+	private int turnCount = 0;
 
 	public GameManager(final int LINE_COUNT) {
 		this.LINE_COUNT = LINE_COUNT;
@@ -58,8 +59,8 @@ public class GameManager implements Observable {
 			case clicked:
 				if (isPlayerCell(clickedCell, currPlayer)) {
 					this.selectedCell = clickedCell;
-					updateAvailableCells(selectedCell);
 					clearAvailableCells();
+					updateAvailableCells(selectedCell);
 					notifyObserver();
 					break;
 				}
@@ -71,16 +72,10 @@ public class GameManager implements Observable {
 					if (players.get(0).getCellCoords().contains(clickedCell)) break;
 				}
 
-				this.status = Status.afterClicked;
+				this.status = Status.notSelected;
 				attack(clickedCell);
 				notifyObserver();
 				System.out.println("clicked");
-				break;
-
-			case afterClicked:
-				this.status = Status.notSelected;
-				notifyObserver();
-				System.out.println("after Clicked");
 				break;
 		}
 	}
@@ -100,6 +95,7 @@ public class GameManager implements Observable {
 
 		if (!canContinue()) {
 			gameOver();
+			startProcedure();
 			return;
 		}
 		clearAvailableCells();
@@ -108,7 +104,7 @@ public class GameManager implements Observable {
 	}
 
 	private void gameOver() {
-		System.out.println("GAME OVER!");
+		JOptionPane.showMessageDialog(null, "Game over!", "GAME OVER", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private boolean canContinue() {
@@ -234,11 +230,7 @@ public class GameManager implements Observable {
 		}
 	}
 
-	public Status getStatus(){
-		return status;
-	}
-
-	public int getCurrentPlayerIndex() {
+	int getCurrentPlayerIndex() {
 		return currentPlayerIndex;
 	}
 
@@ -246,6 +238,21 @@ public class GameManager implements Observable {
 		return board;
 	}
 
+	public int getTurnCount() {
+		return turnCount;
+	}
+
+	public int getRedSlimesCount() {
+		return players.get(0).getSlimes();
+	}
+
+	public int getBlueSlimesCount() {
+		return players.get(1).getSlimes();
+	}
+
+	public Pair getSelectedCell() {
+		return selectedCell;
+	}
 
 	@Override
 	public void addObserver(Observer o) {

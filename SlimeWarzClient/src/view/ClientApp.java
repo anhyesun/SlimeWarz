@@ -12,10 +12,21 @@ public class ClientApp extends JFrame implements Observer {
 	private static final int LINE_COUNT = 7;
 	private final Dimension CLIENT_FRAME_DIM = new Dimension(768, 550);
 	private final Rectangle CLIENT_FRAME_RECT = new Rectangle(CLIENT_FRAME_DIM);
-	private Icon oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
-	private Icon xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
-	private Icon border = new ImageIcon(this.getClass().getResource("/res/border.png"));
+
+	private final String TURN = "Current turn is : ";
+	private final String RED_CELL = "Red slimes are : ";
+	private final String BLUE_CELL = "Blue slimes are : ";
+	private final String SELECTED_CELL = "You selected : ";
+	private final Icon oIcon = new ImageIcon(this.getClass().getResource("/res/red.png"));
+	private final Icon xIcon = new ImageIcon(this.getClass().getResource("/res/blue.png"));
+	private final Icon border = new ImageIcon(this.getClass().getResource("/res/border.png"));
+
 	private JButton[][] squares;
+
+	private JLabel currentTurnInfo;
+	private JLabel redCellInfo;
+	private JLabel blueCellInfo;
+	private JLabel selectedCellInfo;
 
 	private GameManager gameManager;
 
@@ -64,8 +75,9 @@ public class ClientApp extends JFrame implements Observer {
 				}
 			}
 		}
-
-		//gameManager.setInfoPanel();
+		currentTurnInfo.setText(TURN + gameManager.getTurnCount());
+		redCellInfo.setText(RED_CELL + gameManager.getRedSlimesCount());
+		blueCellInfo.setText(BLUE_CELL + gameManager.getBlueSlimesCount());
 	}
 
 	/**
@@ -113,27 +125,30 @@ public class ClientApp extends JFrame implements Observer {
 				Pair currentCoord = new Pair(x, y);
 				squares[y][x].addActionListener(e -> { // set clickEvent to each of buttons
 					gameManager.clickEvent(currentCoord);
+					if (currentCoord == gameManager.getSelectedCell()) {
+						selectedCellInfo.setText(SELECTED_CELL + currentCoord.toString());
+					} else {
+						selectedCellInfo.setText("");
+					}
 				});
 			}
 		}
 		return returnPanel;
 	}
 
-
 	private JPanel infoPanel() {
 		JPanel returnPanel = new JPanel();
 		returnPanel.setLayout(null);
-		JLabel currentTurnInfo = new JLabel();
-		JLabel currentTurnCount = new JLabel();
-		JLabel p1CellInfo = new JLabel();
-		JLabel p2CellInfo = new JLabel();
-		JLabel selectedCellInfo = new JLabel();
+		currentTurnInfo = new JLabel(TURN + gameManager.getTurnCount());
+		redCellInfo = new JLabel();
+		blueCellInfo = new JLabel();
+		selectedCellInfo = new JLabel();
 
 		ComponentAttacher.attach(returnPanel, currentTurnInfo, 10, 100, 200, 25);
-		ComponentAttacher.attach(returnPanel, currentTurnCount, 10, 120, 200, 25);
-		ComponentAttacher.attach(returnPanel, p1CellInfo, 0, 150, 200, 25);
-		ComponentAttacher.attach(returnPanel, p2CellInfo, 0, 180, 200, 25);
-		ComponentAttacher.attach(returnPanel, selectedCellInfo, 0, 210, 200, 25);
+		ComponentAttacher.attach(returnPanel, redCellInfo, 10, 150, 200, 25);
+		ComponentAttacher.attach(returnPanel, blueCellInfo, 10, 180, 200, 25);
+		ComponentAttacher.attach(returnPanel, selectedCellInfo, 10, 210, 200, 25);
+
 		return returnPanel;
 	}
 

@@ -3,6 +3,7 @@ package model;
 import helper.Pair;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player {
 	private ArrayList<Pair> cellCoords;
@@ -25,6 +26,10 @@ public class Player {
 		return cellCoords;
 	}
 
+	public int getSlimes() {
+		return cellCoords.size();
+	}
+
 	public void add(Pair cell) {
 		if (this.cellCoords.contains(cell)) {
 			System.out.println("Occupied in " + cell);
@@ -45,6 +50,4 @@ public class Player {
 	public void remove(Pair cell) {
 		this.cellCoords.remove(cell);
 	}
-
-
 }
